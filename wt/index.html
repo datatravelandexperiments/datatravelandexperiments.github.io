@@ -1,0 +1,144 @@
+<html>
+  <head>
+    <title>Worker test</title>
+
+    <script>
+
+
+worker = [
+  {
+    url: 'dedicated.js',
+
+    construct: function (w) {
+      w.worker = new Worker(w.url);
+      w.worker.onmessage = function (event) {
+        console.log('MAIN onmessage from DEDICATED: ' + event.data);
+      };
+      console.log('MAIN constructed DEDICATED');
+    },
+
+    invoke: function (w) {
+      console.log('MAIN post to DEDICATED');
+      w.worker.postMessage('invoke DEDICATED');
+    }
+  },
+
+  {
+    url: 'shared.js',
+
+    construct: function (w) {
+      w.worker = new SharedWorker(w.url);
+      w.worker.port.onmessage = function (event) {
+        console.log('MAIN onmessage from SHARED: ' + event.data);
+      };
+      console.log('MAIN constructed SHARED');
+    },
+
+    invoke: function (w) {
+      console.log('MAIN post to SHARED');
+      w.worker.port.postMessage('invoke SHARED');
+    }
+  },
+
+  {
+    url: 'service.js',
+
+    construct: function (w) {
+      navigator.serviceWorker.register(w.url, {scope: '/wt/'})
+        .then(function (r) {
+          console.log('MAIN registered SERVICE with scope:', r.scope);
+          if (r.installing) {
+            console.log('MAIN promised SERVICE installing:', r);
+          } else if (r.waiting) {
+            console.log('MAIN promised SERVICE installed:', r);
+          } else if (r.active) {
+            console.log('MAIN promised SERVICE active:', r);
+          }
+        }).catch(function (e) {
+        console.error('MAIN failed to register SERVICE:', e);
+      });
+      // XXX
+      console.log('MAIN constructed SERVICE');
+    },
+
+    invoke: function (w) {
+      console.log('MAIN invoke SERVICE');
+      var url = '/wt/sw/invoke/' + (new Date()).valueOf();
+//    fetch(url).then(function (response) {
+//      console.log('MAIN received SERVICE response:',
+//                  response.status, response);
+//    });
+      var request = new XMLHttpRequest();
+      request.open('GET', url);
+      request.onload = function () {
+        console.log('MAIN received SERVICE response:',
+                    request.status, request.responseText);
+      };
+      request.onerr = function() {
+        console.log('MAIN request failed');
+      };
+      console.log('MAIN requesting:', url);
+      request.send();
+    }
+  }
+];
+
+
+function create(id, button) {
+  // XXX button.disabled = true;
+
+  // Construct the specific worker.
+  var w = worker[id];
+  w.construct(w);
+
+  // Enable the ‘Invoke’ button.
+  e = document.getElementById("invoke-" + id);
+  e.disabled = false;
+}
+
+function invoke(id, button) {
+  var w = worker[id];
+  w.invoke(w);
+}
+
+var consoleLog = console.log
+console.log = function () {
+  consoleLog.apply(console, arguments);
+  var log = document.getElementById('log');
+  var now = new Date();
+  log.value += now.toString().slice(16,24)
+            + '.' + ('00' + now.getMilliseconds()).slice(-3)
+            + ' ' + [].join.call(arguments, ' ') + '\n';
+  log.scrollTop = log.scrollHeight;
+};
+
+    </script>
+  </head>
+  <body>
+    <h1>
+    Worker test
+    </h1>
+
+    <h2>Dedicated worker</h2>
+    <p>
+    <button id="create-0" onclick="create(0, this)">Register</button>
+    <button id="invoke-0" onclick="invoke(0, this)" disabled>Invoke</button>
+    </p>
+
+    <h2>Shared worker</h2>
+    <p>
+    <button id="create-1" onclick="create(1, this)">Register</button>
+    <button id="invoke-1" onclick="invoke(1, this)" disabled>Invoke</button>
+    </p>
+
+    <h2>Service worker</h2>
+    <p>
+    <button id="create-2" onclick="create(2, this)">Register</button>
+    <button id="invoke-2" onclick="invoke(2, this)">Invoke</button>
+    </p>
+
+    <h2>Log</h2>
+    <textarea id="log" rows=24 cols=80 readonly></textarea>
+  </body>
+</html>
+

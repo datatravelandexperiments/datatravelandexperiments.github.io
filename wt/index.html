@@ -4,22 +4,23 @@
 
     <script>
 
-
 worker = [
   {
-    url: 'dedicated.js',
+    url: 'dedicated.mjs',
 
     construct: function (w) {
-      w.worker = new Worker(w.url);
+      w.worker = new Worker(w.url, {type: 'module'});
       w.worker.onmessage = function (event) {
         console.log('MAIN onmessage from DEDICATED: ' + event.data);
       };
       console.log('MAIN constructed DEDICATED');
+      w.vendor = 0;
     },
 
     invoke: function (w) {
       console.log('MAIN post to DEDICATED');
-      w.worker.postMessage('invoke DEDICATED');
+      w.worker.postMessage(w.vendor);
+      w.vendor = 1 - w.vendor;
     }
   },
 

@@ -200,7 +200,7 @@ function drawTouch(touch, eventType, coalesced) {
 
     // Fill the ellipse on start/move
     if (eventType != "touchend") {
-        var opacity = pointMode ? 1 : 0.05;
+        var opacity = pointMode ? 1 : 0.1;
 
         var hue = (touchMap[touch.identifier] * 30) % 256;
         if (coalesced)
@@ -238,12 +238,27 @@ function drawTouch(touch, eventType, coalesced) {
       var t = touch.timeStamp - lastTimeStamp;
       lastTimeStamp = touch.timeStamp;
       var h = radiusX * t * 60/1000;
-      context.strokeStyle = "#f0f";
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(0, 0);
-      context.lineTo(0, h);
-      context.stroke();
+      if (h <= radiusX) {
+        context.strokeStyle = "#0f0";
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(0, h);
+        context.stroke();
+      } else {
+        context.strokeStyle = "#f00";
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(0, radiusX);
+        context.stroke();
+        context.strokeStyle = "#f0f";
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(0, radiusX);
+        context.lineTo(0, h);
+        context.stroke();
+      }
     }
 
     context.restore();

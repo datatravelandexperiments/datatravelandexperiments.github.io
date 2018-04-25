@@ -243,20 +243,20 @@ function drawTouch(touch, eventType, coalesced) {
         context.lineWidth = 1;
         context.beginPath();
         context.moveTo(0, 0);
-        context.lineTo(0, h);
+        context.lineTo(0, -h);
         context.stroke();
       } else {
         context.strokeStyle = "#f00";
         context.lineWidth = 1;
         context.beginPath();
         context.moveTo(0, 0);
-        context.lineTo(0, radiusX);
+        context.lineTo(0, -radiusX);
         context.stroke();
         context.strokeStyle = "#f0f";
         context.lineWidth = 1;
         context.beginPath();
-        context.moveTo(0, radiusX);
-        context.lineTo(0, h);
+        context.moveTo(0, -radiusX);
+        context.lineTo(0, -h);
         context.stroke();
       }
     }

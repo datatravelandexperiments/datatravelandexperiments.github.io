@@ -9,7 +9,8 @@ var foundRotationAngle = false;
 var scale = 1;
 var mousePressed = false;
 var drawCoalesced = false;
-var lastTimeStamp = 0;
+var lastEventTimeStamp = 0;
+var lastPerfTimeStamp = 0;
 var drawTimeStamp = true;
 
 function InitializeApp() {
@@ -235,8 +236,19 @@ function drawTouch(touch, eventType, coalesced) {
     }
 
     if (drawTimeStamp && "timeStamp" in touch) {
-      var t = touch.timeStamp - lastTimeStamp;
-      lastTimeStamp = touch.timeStamp;
+      var now = window.performance.now();
+      var u = now - lastPerfTimeStamp;
+      lastPerfTimeStamp = now;
+      var k = radiusX * u * 60/1000;
+      context.strokeStyle = "#00f";
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(0, 0);
+      context.lineTo(0, k);
+      context.stroke();
+
+      var t = touch.timeStamp - lastEventTimeStamp;
+      lastEventTimeStamp = touch.timeStamp;
       var h = radiusX * t * 60/1000;
       if (h <= radiusX) {
         context.strokeStyle = "#0f0";

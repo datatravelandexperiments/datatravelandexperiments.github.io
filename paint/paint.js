@@ -10,7 +10,8 @@ var scale = 1;
 var mousePressed = false;
 var drawCoalesced = false;
 var lastEventTimeStamp = 0;
-var lastPerfTimeStamp = 0;
+var lastX = -1;
+var lastY = -1;
 var drawTimeStamp = true;
 
 function InitializeApp() {
@@ -236,17 +237,6 @@ function drawTouch(touch, eventType, coalesced) {
     }
 
     if (drawTimeStamp && "timeStamp" in touch) {
-      var now = window.performance.now();
-      var u = now - lastPerfTimeStamp;
-      lastPerfTimeStamp = now;
-      var k = radiusX * u * 60/1000;
-      context.strokeStyle = "#00f";
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(0, 0);
-      context.lineTo(0, k);
-      context.stroke();
-
       var t = touch.timeStamp - lastEventTimeStamp;
       lastEventTimeStamp = touch.timeStamp;
       var h = radiusX * t * 60/1000;
@@ -271,6 +261,22 @@ function drawTouch(touch, eventType, coalesced) {
         context.lineTo(0, -h);
         context.stroke();
       }
+
+      if (lastX >= 0) {
+        var dX = lastX - touch.pageX;
+        var dY = lastY - touch.pageY;
+        var d = Math.sqrt(dX*dX + dY*dY);
+        var v = d / t;
+        var k = radiusX * v;
+        context.strokeStyle = "#00f";
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(0, 0);
+        context.lineTo(0, k);
+        context.stroke();
+      }
+      lastX = touch.pageX;
+      lastY = touch.pageY;
     }
 
     context.restore();

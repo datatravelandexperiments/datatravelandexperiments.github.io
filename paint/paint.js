@@ -10,6 +10,7 @@ var scale = 1;
 var mousePressed = false;
 var drawCoalesced = false;
 var lastEventTimeStamp = 0;
+var lastPerfTimeStamp = 0;
 var lastX = -1;
 var lastY = -1;
 var drawTimeStamp = true;
@@ -237,6 +238,17 @@ function drawTouch(touch, eventType, coalesced) {
     }
 
     if (drawTimeStamp && "timeStamp" in touch) {
+      var now = window.performance.now();
+      var u = now - lastPerfTimeStamp;
+      lastPerfTimeStamp = now;
+      var k = radiusX * u * 60/1000;
+      context.strokeStyle = "#ff0";
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(-2, -k);
+      context.lineTo(2, -k);
+      context.stroke();
+      
       var t = touch.timeStamp - lastEventTimeStamp;
       lastEventTimeStamp = touch.timeStamp;
       var h = radiusX * t * 60/1000;

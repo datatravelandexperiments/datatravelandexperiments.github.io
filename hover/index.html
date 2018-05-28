@@ -2,6 +2,9 @@
   <head>
     <title>Hover test.</title>
     <style>
+.body {
+  background-color: #EEEEEE;
+}
 .hoverable {
   border: 2px solid;
   margin: 6px;
@@ -21,20 +24,40 @@
 function mo(e) {
   console.log("event on " + e.target.id);
 }
+
+function init() {
+  document.addEventListener("mousemove",
+    e => {
+      var s = "move " + e.target +
+        " screen=(" + e.screenX + "," + e.screenY + ")" +
+        " client=(" + e.clientX + "," + e.clientY + ")" +
+        " buttons=" + e.buttons;
+      console.log(s);
+      output.innerHTML = s;
+    });
+}
+
     </script>
   </head>
-  <body>
+  <body onload="init()">
     <p>
     Hover test.
     </p>
-    <div id="hov0" class=hoverable onmouseover="mo()">
-      OUTER
-      <div id="hov1" class=hoverable onmouseover="mo()">
-        INNER ONE
+    <div>
+      input
+      <div id="hov0" class=hoverable onmouseenter="mo(event)">
+        OUTER
+        <div id="hov1" class=hoverable onmouseenter="mo(event)">
+          INNER ONE
+        </div>
+        <div id="hov2" class=hoverable onmouseenter="mo(event)">
+          INNER TWO
+        </div>
       </div>
-      <div id="hov2" class=hoverable onmouseover="mo()">
-        INNER TWO
-      </div>
+    </div>
+    <div>
+      output:
+      <textbox id="output" cols=80 rows=50 multiline=true style="border: 1px solid grey;"></textbox>
     </div>
   </body>
 </html>

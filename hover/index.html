@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>Hover test.</title>
+    <style>
+.hoverable {
+  border: 2px solid;
+  margin: 6px;
+  padding: 6px;
+}
+#hov0:hover {
+  background-color: red;
+}
+#hov1:hover {
+  background-color: orange;
+}
+#hov2:hover {
+  background-color: yellow;
+}
+    </style>
+    <script>
+function mo(e) {
+  console.log("event on " + e.target.id);
+}
+    </script>
+  </head>
+  <body>
+    <p>
+    Hover test.
+    </p>
+    <div id="hov0" class=hoverable onmouseover="mo()">
+      OUTER
+      <div id="hov1" class=hoverable onmouseover="mo()">
+        INNER ONE
+      </div>
+      <div id="hov2" class=hoverable onmouseover="mo()">
+        INNER TWO
+      </div>
+    </div>
+  </body>
+</html>
